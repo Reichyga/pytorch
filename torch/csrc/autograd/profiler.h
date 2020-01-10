@@ -155,7 +155,7 @@ struct TORCH_API Event final {
   }
   double cuda_elapsed_us(const Event & e);
   bool has_cuda() const {
-    return event != nullptr;
+    return event != 0;
   }
   int device() const {
     return device_;
@@ -168,7 +168,7 @@ private:
   uint16_t thread_id_;
   std::vector<std::vector<int64_t>> shapes_;
   int device_ = -1;
-  struct CUevent_st* event = nullptr;
+  struct CUevent_st* event = 0;
 };
 
 // a linked-list of fixed sized vectors, to avoid

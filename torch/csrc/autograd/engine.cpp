@@ -256,7 +256,7 @@ auto ReadyQueue::push(NodeTask item) -> void {
 auto ReadyQueue::pushShutdownTask() -> void {
   {
     std::lock_guard<std::mutex> lock(mutex_);
-    heap_.push(NodeTask(nullptr, nullptr, InputBuffer(0), true));
+    heap_.push(NodeTask(0, 0, InputBuffer(0), true));
   }
   not_empty_.notify_one();
 }
@@ -330,7 +330,7 @@ auto Engine::thread_init(int device) -> void {
   // arbitrarily picked to colocate devices.  Maybe the other approach is
   // better.
   set_device(device);
-  thread_main(nullptr);
+  thread_main(0);
 }
 
 // NOTE: graph_tasks do not necessarily form a stack. Imagine this
@@ -391,7 +391,7 @@ auto Engine::thread_main(GraphTask *graph_task) -> void {
         if (--task.base_->outstanding_tasks_ == 0) {
           // Synchronize outstanding_tasks_ with queue mutex
           std::atomic_thread_fence(std::memory_order_release);
-          ready_queue_by_index(base_owner).push(NodeTask(task.base_, nullptr, InputBuffer(0)));
+          ready_queue_by_index(base_owner).push(NodeTask(task.base_, 0, InputBuffer(0)));
         }
       }
     }
@@ -924,7 +924,7 @@ void GraphTask::init_to_execute(Node& graph_root, const edge_list& outputs) {
         auto fn = next[next_next_fn_++].function.get();
         if (fn) return fn;
       }
-      return nullptr;
+      return 0;
     }
   };
   std::vector<Frame> stack;

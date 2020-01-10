@@ -187,7 +187,7 @@ struct TORCH_API Variable : public at::Tensor {
 
   /// Attempts to get a pointer to the gradient accumulator of the `Variable`,
   /// if it still exists. If the gradient accumulator function has been
-  /// destroyed, returns a `nullptr`.
+  /// destroyed, returns a `0`.
   std::shared_ptr<Node> try_get_grad_accumulator() const;
 
   /// Gets the gradient accumulator of the `Variable` if it has one, or else
@@ -650,7 +650,7 @@ inline uint32_t Variable::output_nr() const noexcept {
 }
 
 inline bool Variable::is_leaf() const noexcept {
-  return get_autograd_meta()->grad_fn_ == nullptr;
+  return get_autograd_meta()->grad_fn_ == 0;
 }
 
 // Versions

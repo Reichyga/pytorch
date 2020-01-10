@@ -11,9 +11,9 @@ struct Node;
 namespace profiler {
 
 struct TORCH_API StringView {
-  StringView() : StringView(nullptr) {}
+  StringView() : StringView(0) {}
   explicit StringView(const char* str_ptr)
-    : owned_str_ptr_(nullptr), str_ptr_(str_ptr) {}
+    : owned_str_ptr_(0), str_ptr_(str_ptr) {}
   explicit StringView(std::string str)
     : owned_str_ptr_(std::make_shared<std::string>(std::move(str))),
       str_ptr_(owned_str_ptr_->c_str()) {}
@@ -84,11 +84,11 @@ struct TORCH_API RecordFunction {
  private:
   void processCallbacks();
 
-  Node* fn_ = nullptr;
+  Node* fn_ = 0;
   StringView name_;
   int64_t sequence_nr_ = -1;
   std::vector<c10::IValue> inputs_;
-  RecordFunction* parent_ = nullptr;
+  RecordFunction* parent_ = 0;
 
   bool initialized_ = false;
   bool run_sampled_ = false;

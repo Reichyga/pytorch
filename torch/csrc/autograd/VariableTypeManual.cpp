@@ -113,7 +113,7 @@ int64_t _version(const Tensor & self) {
 
 // We don't have an outplace copy, so this can't be generated automatically
 Tensor & copy_(Tensor & self, const Tensor & src, bool non_blocking) {
-  jit::Value* output = nullptr;
+  jit::Value* output = 0;
   if(torch::jit::tracer::isTracing()) {
     const jit::tracer::TracingState& state = *jit::tracer::getTracingState();
     auto& graph = state.graph;
@@ -195,7 +195,7 @@ Tensor & resize_as_(Tensor & self, const Tensor & the_template) {
 Tensor detach(const Tensor & self) {
   RECORD_FUNCTION("detach", std::vector<c10::IValue>({self}));
 
-  torch::jit::Node* node = nullptr;
+  torch::jit::Node* node = 0;
   if (jit::tracer::isTracing()) {
     auto& graph = jit::tracer::getTracingState()->graph;
     node = graph->create(jit::aten::detach, /*num_outputs=*/0);
@@ -216,7 +216,7 @@ Tensor detach(const Tensor & self) {
 Tensor & detach_(Tensor & self) {
   RECORD_FUNCTION("detach_", std::vector<c10::IValue>({self}));
 
-  torch::jit::Node* node = nullptr;
+  torch::jit::Node* node = 0;
   if (jit::tracer::isTracing()) {
     auto& graph = jit::tracer::getTracingState()->graph;
     node = graph->create(jit::aten::detach, /*num_outputs=*/0);

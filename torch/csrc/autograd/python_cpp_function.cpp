@@ -87,7 +87,7 @@ int THPCppFunction_clear(PyObject* self)
   auto f = (THPCppFunction*)self;
   // Remove the weak ref of the c++ object if it exist
   if (f->cdata) {
-    f->cdata->set_pyobj(nullptr);
+    f->cdata->set_pyobj(0);
   }
   f->cdata.reset();
   return 0;
@@ -106,16 +106,16 @@ PyObject* THPCppFunction_next_functions(THPCppFunction* self, PyObject* hook)
 {
   const auto num_next = self->cdata->num_outputs();
   THPObjectPtr py_functions(PyTuple_New(num_next));
-  if (!py_functions) return nullptr;
+  if (!py_functions) return 0;
   for (size_t i = 0; i < num_next; ++i) {
     auto& c_tuple = self->cdata->next_edge(i);
     THPObjectPtr tuple(PyTuple_New(2));
-    if (!tuple) return nullptr;
+    if (!tuple) return 0;
     PyObject *py_fn = functionToPyObject(c_tuple.function);
-    if (!py_fn) return nullptr;
+    if (!py_fn) return 0;
     PyTuple_SET_ITEM(tuple.get(), 0, py_fn);
     PyObject *py_idx = PyLong_FromLong(c_tuple.input_nr);
-    if (!py_idx) return nullptr;
+    if (!py_idx) return 0;
     PyTuple_SET_ITEM(tuple.get(), 1, py_idx);
     PyTuple_SET_ITEM(py_functions.get(), i, tuple.release());
   }
@@ -160,12 +160,12 @@ PyObject* THPCppFunction_name(PyObject* self, PyObject *noargs) {
 
 static struct PyMethodDef default_methods[] = {
   THP_FUNCTION_DEFAULT_METHODS,
-  {nullptr}
+  {0}
 };
 
 static struct PyGetSetDef default_properties[] = {
   THP_FUNCTION_DEFAULT_PROPERTIES,
-  {nullptr}
+  {0}
 };
 
 PyTypeObject* _initFunctionPyTypeObject(PyTypeObject& type, const char* name,
@@ -191,7 +191,7 @@ static std::unordered_map<std::type_index, THPObjectPtr> cpp_function_types;
 
 struct DefaultFunctionType {
   DefaultFunctionType() : type() {
-    _initFunctionPyTypeObject(type, "CppFunction", nullptr, nullptr);
+    _initFunctionPyTypeObject(type, "CppFunction", 0, 0);
     Py_INCREF(&type);
   }
 
@@ -225,7 +225,7 @@ PyObject* functionToPyObject(const std::shared_ptr<Node>& cdata)
     }
 
     THPObjectPtr obj(type->tp_alloc(type, 0));
-    if (!obj) return nullptr;
+    if (!obj) return 0;
     THPCppFunction* f = (THPCppFunction*)obj.get();
     new (&f->cdata) std::shared_ptr<Node>(cdata);
 
@@ -253,9 +253,9 @@ PyObject* registerFunctionHook(Node& fn, PyObject* hook)
   }
 
   THPObjectPtr register_fn(PyObject_GetAttrString(THPFunctionClass, "_register_hook"));
-  if (!register_fn) return nullptr;
-  THPObjectPtr res(PyObject_CallFunctionObjArgs(register_fn.get(), dict, hook, nullptr));
-  if (!res) return nullptr;
+  if (!register_fn) return 0;
+  THPObjectPtr res(PyObject_CallFunctionObjArgs(register_fn.get(), dict, hook, 0));
+  if (!res) return 0;
 
   if (dict == Py_None) {
     dict = PyTuple_GET_ITEM(res.get(), 0);

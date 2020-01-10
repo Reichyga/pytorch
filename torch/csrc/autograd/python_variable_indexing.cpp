@@ -339,7 +339,7 @@ static void copy_to(Variable dst, const Variable& src) {
 
 int THPVariable_setitem(PyObject* self, PyObject* index, PyObject* py_value) {
   HANDLE_TH_ERRORS
-  if (py_value == nullptr) {
+  if (py_value == 0) {
     throw TypeError("Tensor does not support deleting items");
   }
 

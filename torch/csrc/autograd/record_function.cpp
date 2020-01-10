@@ -90,7 +90,7 @@ class CallbackManager {
   }
 };
 
-thread_local RecordFunction* thread_local_func_ = nullptr;
+thread_local RecordFunction* thread_local_func_ = 0;
 
 CallbackManager& manager() {
   static CallbackManager instance;

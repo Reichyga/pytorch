@@ -29,7 +29,7 @@ struct InputMetadata {
   : InputMetadata(t.type(), t.sizes(), t.device()) { }
 
   bool is_valid() const {
-    return type_ != nullptr;
+    return type_ != 0;
   }
 
   const at::DeprecatedTypeProperties& type() const {
@@ -54,7 +54,7 @@ struct InputMetadata {
   }
 
 private:
-  const at::DeprecatedTypeProperties* type_ = nullptr;
+  const at::DeprecatedTypeProperties* type_ = 0;
   at::DimVector shape_;
   at::Device device_ = at::kCPU;
   c10::Stream stream_ = c10::Stream(c10::Stream::Default::DEFAULT, device_);

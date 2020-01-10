@@ -43,7 +43,7 @@ using namespace torch::autograd;
 
 namespace py = pybind11;
 
-PyObject *THPVariableClass = nullptr;
+PyObject *THPVariableClass = 0;
 
 static const char* VOLATILE_WARNING =
     "volatile was removed and now has no effect. Use "
@@ -123,7 +123,7 @@ static int THPVariable_clear(THPVariable *self)
     // objects stay live, buster!  See
     // https://github.com/pytorch/pytorch/issues/22884 for an example of
     // this actually showing up.
-    self->cdata.set_pyobj(nullptr);
+    self->cdata.set_pyobj(0);
   }
   self->cdata.reset();
   return 0;
@@ -414,7 +414,7 @@ int THPVariable_set_backwards_hooks(THPVariable *self, PyObject *obj, void *unus
   HANDLE_TH_ERRORS
   THPUtils_assertRet(-1, obj, "Deletion of _backwards_hooks not allowed!");
   if (obj == Py_None) {
-    obj = nullptr;
+    obj = 0;
   }
   Py_XINCREF(obj);
   Py_XDECREF(self->backward_hooks);
@@ -498,34 +498,34 @@ static PyObject * THPVariable_device(THPVariable* self, void *unused) {
 }
 
 static struct PyGetSetDef THPVariable_properties[] = {
-  {"T", (getter)THPVariable_get_T, nullptr, nullptr, nullptr},
-  {"_cdata", (getter)THPVariable_get_cdata, nullptr, nullptr, nullptr},
-  {"_version", (getter)THPVariable_get_version, nullptr, nullptr, nullptr},
-  {"grad_fn", (getter)THPVariable_get_grad_fn, nullptr, nullptr, nullptr},
-  {"_grad_fn", (getter)THPVariable_get_grad_fn, (setter)THPVariable_set_grad_fn, nullptr, nullptr},
-  {"is_leaf", (getter)THPVariable_is_leaf, nullptr, nullptr, nullptr},
-  {"data", (getter)THPVariable_get_data, (setter)THPVariable_set_data, nullptr, nullptr},
-  {"_grad", (getter)THPVariable_get_grad, (setter)THPVariable_set_grad, nullptr, nullptr}, // only for legacy reasons
-  {"grad", (getter)THPVariable_get_grad, (setter)THPVariable_set_grad, nullptr, nullptr},
-  {"_base", (getter)THPVariable_get_base, nullptr, nullptr, nullptr},
-  {"volatile", (getter)THPVariable_get_volatile, (setter)THPVariable_set_volatile, nullptr, nullptr},
-  {"output_nr", (getter)THPVariable_get_output_nr, nullptr, nullptr, nullptr},
-  {"requires_grad", (getter)THPVariable_get_requires_grad, (setter)THPVariable_set_requires_grad, nullptr, nullptr},
-  {"_backward_hooks", (getter)THPVariable_get_backwards_hooks, (setter)THPVariable_set_backwards_hooks, nullptr, nullptr},
-  {"name", (getter)THPVariable_get_name, nullptr, nullptr, nullptr},
-  {"shape", (getter)THPVariable_get_shape, nullptr, nullptr, nullptr},
-  {"is_cuda", (getter)THPVariable_is_cuda, nullptr, nullptr, nullptr},
-  {"is_sparse", (getter)THPVariable_is_sparse, nullptr, nullptr, nullptr},
-  {"is_mkldnn", (getter)THPVariable_is_mkldnn, nullptr, nullptr, nullptr},
-  {"is_quantized", (getter)THPVariable_is_quantized, nullptr, nullptr, nullptr},
-  {"dtype", (getter)THPVariable_dtype, nullptr, nullptr, nullptr},
-  {"layout", (getter)THPVariable_layout, nullptr, nullptr, nullptr},
-  {"device", (getter)THPVariable_device, nullptr, nullptr, nullptr},
-  {"ndim", (getter)THPVariable_get_ndim, nullptr, nullptr, nullptr},
+  {"T", (getter)THPVariable_get_T, 0, 0, 0},
+  {"_cdata", (getter)THPVariable_get_cdata, 0, 0, 0},
+  {"_version", (getter)THPVariable_get_version, 0, 0, 0},
+  {"grad_fn", (getter)THPVariable_get_grad_fn, 0, 0, 0},
+  {"_grad_fn", (getter)THPVariable_get_grad_fn, (setter)THPVariable_set_grad_fn, 0, 0},
+  {"is_leaf", (getter)THPVariable_is_leaf, 0, 0, 0},
+  {"data", (getter)THPVariable_get_data, (setter)THPVariable_set_data, 0, 0},
+  {"_grad", (getter)THPVariable_get_grad, (setter)THPVariable_set_grad, 0, 0}, // only for legacy reasons
+  {"grad", (getter)THPVariable_get_grad, (setter)THPVariable_set_grad, 0, 0},
+  {"_base", (getter)THPVariable_get_base, 0, 0, 0},
+  {"volatile", (getter)THPVariable_get_volatile, (setter)THPVariable_set_volatile, 0, 0},
+  {"output_nr", (getter)THPVariable_get_output_nr, 0, 0, 0},
+  {"requires_grad", (getter)THPVariable_get_requires_grad, (setter)THPVariable_set_requires_grad, 0, 0},
+  {"_backward_hooks", (getter)THPVariable_get_backwards_hooks, (setter)THPVariable_set_backwards_hooks, 0, 0},
+  {"name", (getter)THPVariable_get_name, 0, 0, 0},
+  {"shape", (getter)THPVariable_get_shape, 0, 0, 0},
+  {"is_cuda", (getter)THPVariable_is_cuda, 0, 0, 0},
+  {"is_sparse", (getter)THPVariable_is_sparse, 0, 0, 0},
+  {"is_mkldnn", (getter)THPVariable_is_mkldnn, 0, 0, 0},
+  {"is_quantized", (getter)THPVariable_is_quantized, 0, 0, 0},
+  {"dtype", (getter)THPVariable_dtype, 0, 0, 0},
+  {"layout", (getter)THPVariable_layout, 0, 0, 0},
+  {"device", (getter)THPVariable_device, 0, 0, 0},
+  {"ndim", (getter)THPVariable_get_ndim, 0, 0, 0},
 #ifdef BUILD_NAMEDTENSOR
-  {"names", (getter)THPVariable_get_names, (setter)THPVariable_set_names, nullptr, nullptr},
+  {"names", (getter)THPVariable_get_names, (setter)THPVariable_set_names, 0, 0},
 #endif
-  {nullptr}
+  {0}
 };
 
 static PyMappingMethods THPVariable_as_mapping = {
@@ -535,48 +535,48 @@ static PyMappingMethods THPVariable_as_mapping = {
 };
 
 static PyMethodDef extra_methods[] = {
-  {"_make_subclass", (PyCFunction)(void(*)(void))THPVariable_make_subclass, METH_STATIC | METH_VARARGS | METH_KEYWORDS, nullptr},
-  {nullptr}
+  {"_make_subclass", (PyCFunction)(void(*)(void))THPVariable_make_subclass, METH_STATIC | METH_VARARGS | METH_KEYWORDS, 0},
+  {0}
 };
 
 PyTypeObject THPVariableType = {
-  PyVarObject_HEAD_INIT(nullptr, 0)
+  PyVarObject_HEAD_INIT(0, 0)
   "torch._C._TensorBase",                /* tp_name */
   sizeof(THPVariable),                   /* tp_basicsize */
   0,                                     /* tp_itemsize */
   (destructor)THPVariable_dealloc,       /* tp_dealloc */
-  nullptr,                                     /* tp_print */
-  nullptr,                                     /* tp_getattr */
-  nullptr,                                     /* tp_setattr */
-  nullptr,                                     /* tp_reserved */
-  nullptr,                                     /* tp_repr */
-  nullptr,                                     /* tp_as_number */
-  nullptr,                                     /* tp_as_sequence */
+  0,                                     /* tp_print */
+  0,                                     /* tp_getattr */
+  0,                                     /* tp_setattr */
+  0,                                     /* tp_reserved */
+  0,                                     /* tp_repr */
+  0,                                     /* tp_as_number */
+  0,                                     /* tp_as_sequence */
   &THPVariable_as_mapping,               /* tp_as_mapping */
-  nullptr,                                     /* tp_hash  */
-  nullptr,                                     /* tp_call */
-  nullptr,                                     /* tp_str */
-  nullptr,                                     /* tp_getattro */
-  nullptr,                                     /* tp_setattro */
-  nullptr,                                     /* tp_as_buffer */
+  0,                                     /* tp_hash  */
+  0,                                     /* tp_call */
+  0,                                     /* tp_str */
+  0,                                     /* tp_getattro */
+  0,                                     /* tp_setattro */
+  0,                                     /* tp_as_buffer */
   Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC, /* tp_flags */
-  nullptr,                               /* tp_doc */
+  0,                               /* tp_doc */
   (traverseproc)THPVariable_traverse,    /* tp_traverse */
   (inquiry)THPVariable_clear,            /* tp_clear */
-  nullptr,                                     /* tp_richcompare */
+  0,                                     /* tp_richcompare */
   0,                                     /* tp_weaklistoffset */
-  nullptr,                                     /* tp_iter */
-  nullptr,                                     /* tp_iternext */
-  nullptr,                                     /* tp_methods */
-  nullptr,                                     /* tp_members */
+  0,                                     /* tp_iter */
+  0,                                     /* tp_iternext */
+  0,                                     /* tp_methods */
+  0,                                     /* tp_members */
   THPVariable_properties,                /* tp_getset */
-  nullptr,                                     /* tp_base */
-  nullptr,                                     /* tp_dict */
-  nullptr,                                     /* tp_descr_get */
-  nullptr,                                     /* tp_descr_set */
+  0,                                     /* tp_base */
+  0,                                     /* tp_dict */
+  0,                                     /* tp_descr_get */
+  0,                                     /* tp_descr_set */
   0,                                     /* tp_dictoffset */
-  nullptr,                                     /* tp_init */
-  nullptr,                                     /* tp_alloc */
+  0,                                     /* tp_init */
+  0,                                     /* tp_alloc */
   THPVariable_pynew                      /* tp_new */
 };
 

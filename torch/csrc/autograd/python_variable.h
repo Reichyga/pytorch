@@ -15,7 +15,7 @@ struct THPVariable {
     torch::autograd::Variable cdata;
     // Hooks to be run on backwards pass (corresponds to Python attr
     // '_backwards_hooks', set by 'register_hook')
-    PyObject* backward_hooks = nullptr;
+    PyObject* backward_hooks = 0;
 };
 
 THP_API PyObject *THPVariableClass;

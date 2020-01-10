@@ -269,7 +269,7 @@ RecordProfile::~RecordProfile() {
 
 void RecordProfile::processEvents(const std::vector<Event*>& events) {
   TORCH_CHECK(out_, "could not open file");
-  Event* start = nullptr;
+  Event* start = 0;
   for (Event* e : events) {
     if(0 == strcmp(e->name(), "__start_profile")) {
       start = e;

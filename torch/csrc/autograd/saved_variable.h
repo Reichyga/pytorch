@@ -26,7 +26,7 @@ class TORCH_API SavedVariable {
   /// Reconstructs the saved variable. Pass `saved_for` as the gradient
   /// function if constructing the `SavedVariable` with it would have caused a
   /// circular reference.
-  Variable unpack(std::shared_ptr<Node> saved_for = nullptr) const;
+  Variable unpack(std::shared_ptr<Node> saved_for = 0) const;
 
   void reset_data() {
     return data_.reset();

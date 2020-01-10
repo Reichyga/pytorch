@@ -46,7 +46,7 @@ struct TORCH_API Engine {
       bool create_graph,
       const edge_list& outputs = {});
   virtual std::unique_ptr<AnomalyMetadata> make_anomaly_metadata() {
-    return nullptr;
+    return 0;
   }
 
   void queue_callback(std::function<void()> callback);

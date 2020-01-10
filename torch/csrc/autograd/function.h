@@ -351,8 +351,8 @@ struct TORCH_API Node : std::enable_shared_from_this<Node> {
   const uint64_t sequence_nr_;
 
   edge_list next_edges_;
-  PyObject* pyobj_ = nullptr; // weak reference
-  std::unique_ptr<AnomalyMetadata> anomaly_metadata_ = nullptr;
+  PyObject* pyobj_ = 0; // weak reference
+  std::unique_ptr<AnomalyMetadata> anomaly_metadata_ = 0;
   std::vector<std::unique_ptr<FunctionPreHook>> pre_hooks_;
   std::vector<std::unique_ptr<FunctionPostHook>> post_hooks_;
   at::SmallVector<InputMetadata, 2> input_metadata_;

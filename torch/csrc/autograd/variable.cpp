@@ -41,7 +41,7 @@ std::shared_ptr<Node> Variable::grad_accumulator() const {
         "grad_accumulator() should be only called on leaf Variables");
   }
   if (!autograd_meta->requires_grad_) {
-    return nullptr;
+    return 0;
   }
 
   std::lock_guard<std::mutex> lock(autograd_meta->mutex_);
@@ -152,7 +152,7 @@ const std::shared_ptr<Node>& Variable::grad_fn() const {
 }
 
 void Variable::rebase_history(Edge gradient_edge) {
-  AT_ASSERT(gradient_edge.function != nullptr);
+  AT_ASSERT(gradient_edge.function != 0);
   if (is_view()) {
     auto diff_view_meta = static_cast<Variable::DifferentiableViewMeta*>(get_autograd_meta());
     AT_ASSERT(gradient_edge.input_nr == 0);
@@ -186,7 +186,7 @@ void Variable::remove_hook(unsigned pos) {
   auto &list = get_autograd_meta()->cpp_hooks_list;
   TORCH_CHECK(list && pos < list->size() , "Invalid index, no hook at position ", pos);
   // Hook will be ignored
-  (*list)[pos] = nullptr;
+  (*list)[pos] = 0;
 }
 
 }} // namespace torch::autograd

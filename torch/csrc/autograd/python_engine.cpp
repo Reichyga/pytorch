@@ -69,7 +69,7 @@ variable_list PythonEngine::execute(
 
 }}} // namespace torch::autograd::python
 
-PyObject *THPEngineClass = nullptr;
+PyObject *THPEngineClass = 0;
 
 static bool _reinitialize_engine = false;
 
@@ -92,19 +92,19 @@ PyObject *THPEngine_run_backward(THPEngine *self, PyObject *args, PyObject *kwar
 {
   HANDLE_TH_ERRORS
   _maybe_reinitialize_engine_after_fork();
-  PyObject *tensors = nullptr;
-  PyObject *grad_tensors = nullptr;
+  PyObject *tensors = 0;
+  PyObject *grad_tensors = 0;
   unsigned char keep_graph = 0;
   unsigned char create_graph = 0;
-  PyObject *inputs = nullptr;
+  PyObject *inputs = 0;
   unsigned char allow_unreachable = 0;
   const char *accepted_kwargs[] = {
       "tensors", "grad_tensors", "keep_graph", "create_graph", "inputs",
-      "allow_unreachable", nullptr
+      "allow_unreachable", 0
   };
   if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OObb|Ob", (char**)accepted_kwargs,
         &tensors, &grad_tensors, &keep_graph, &create_graph, &inputs, &allow_unreachable))
-    return nullptr;
+    return 0;
 
   THPUtils_assert(PyTuple_Check(tensors), "tensors argument is expected to "
       "be a tuple, but got %s", THPUtils_typename(tensors));
@@ -152,7 +152,7 @@ PyObject *THPEngine_run_backward(THPEngine *self, PyObject *args, PyObject *kwar
   }
 
   std::vector<Edge> output_edges;
-  if (inputs != nullptr) {
+  if (inputs != 0) {
     int num_inputs = PyTuple_GET_SIZE(inputs);
     output_edges.reserve(num_inputs);
     for (int i = 0; i < num_inputs; ++i) {
@@ -181,10 +181,10 @@ PyObject *THPEngine_run_backward(THPEngine *self, PyObject *args, PyObject *kwar
     outputs = engine.execute(roots, grads, keep_graph, create_graph, output_edges);
   }
 
-  if (inputs != nullptr) {
+  if (inputs != 0) {
     int num_inputs = PyTuple_GET_SIZE(inputs);
     THPObjectPtr py_outputs {PyTuple_New(num_inputs)};
-    if (!py_outputs) return nullptr;
+    if (!py_outputs) return 0;
     for (int i = 0; i < num_inputs; i++) {
       THPUtils_assert(allow_unreachable || outputs[i].defined(), "One of the "
                       "differentiated Tensors appears to not have been used "
@@ -206,7 +206,7 @@ PyObject* THPEngine_queue_callback(PyObject *self, PyObject *_callback) {
   Py_INCREF(_callback);
   engine.queue_callback([callback]() {
     AutoGIL gil;
-    THPObjectPtr result {PyObject_CallFunctionObjArgs(callback.get(), nullptr)};
+    THPObjectPtr result {PyObject_CallFunctionObjArgs(callback.get(), 0)};
     if (!result) throw python_error();
   });
   Py_RETURN_NONE;
@@ -229,51 +229,51 @@ PyObject *THPEngine_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 }
 
 static struct PyMethodDef THPEngine_methods[] = {
-  {(char*)"run_backward", (PyCFunction)(void(*)(void))THPEngine_run_backward, METH_VARARGS | METH_KEYWORDS, nullptr},
-  {(char*)"queue_callback", (PyCFunction)THPEngine_queue_callback, METH_O, nullptr},
-  {(char*)"is_checkpoint_valid", (PyCFunction)THPEngine_is_checkpoint_valid, METH_NOARGS, nullptr},
-  {nullptr}
+  {(char*)"run_backward", (PyCFunction)(void(*)(void))THPEngine_run_backward, METH_VARARGS | METH_KEYWORDS, 0},
+  {(char*)"queue_callback", (PyCFunction)THPEngine_queue_callback, METH_O, 0},
+  {(char*)"is_checkpoint_valid", (PyCFunction)THPEngine_is_checkpoint_valid, METH_NOARGS, 0},
+  {0}
 };
 
 
 PyTypeObject THPEngineType = {
-  PyVarObject_HEAD_INIT(nullptr, 0)
+  PyVarObject_HEAD_INIT(0, 0)
   "torch._C._EngineBase",                /* tp_name */
   sizeof(THPEngine),                     /* tp_basicsize */
   0,                                     /* tp_itemsize */
-  nullptr,                                     /* tp_dealloc */
-  nullptr,                                     /* tp_print */
-  nullptr,                                     /* tp_getattr */
-  nullptr,                                     /* tp_setattr */
-  nullptr,                                     /* tp_reserved */
-  nullptr,                                     /* tp_repr */
-  nullptr,                                     /* tp_as_number */
-  nullptr,                                     /* tp_as_sequence */
-  nullptr,                                     /* tp_as_mapping */
-  nullptr,                                     /* tp_hash  */
-  nullptr,                                     /* tp_call */
-  nullptr,                                     /* tp_str */
-  nullptr,                                     /* tp_getattro */
-  nullptr,                                     /* tp_setattro */
-  nullptr,                                     /* tp_as_buffer */
+  0,                                     /* tp_dealloc */
+  0,                                     /* tp_print */
+  0,                                     /* tp_getattr */
+  0,                                     /* tp_setattr */
+  0,                                     /* tp_reserved */
+  0,                                     /* tp_repr */
+  0,                                     /* tp_as_number */
+  0,                                     /* tp_as_sequence */
+  0,                                     /* tp_as_mapping */
+  0,                                     /* tp_hash  */
+  0,                                     /* tp_call */
+  0,                                     /* tp_str */
+  0,                                     /* tp_getattro */
+  0,                                     /* tp_setattro */
+  0,                                     /* tp_as_buffer */
   Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
-  nullptr,                               /* tp_doc */
-  nullptr,                                     /* tp_traverse */
-  nullptr,                                     /* tp_clear */
-  nullptr,                                     /* tp_richcompare */
+  0,                               /* tp_doc */
+  0,                                     /* tp_traverse */
+  0,                                     /* tp_clear */
+  0,                                     /* tp_richcompare */
   0,                                     /* tp_weaklistoffset */
-  nullptr,                                     /* tp_iter */
-  nullptr,                                     /* tp_iternext */
+  0,                                     /* tp_iter */
+  0,                                     /* tp_iternext */
   THPEngine_methods,                     /* tp_methods */
-  nullptr,                                     /* tp_members */
-  nullptr,                                     /* tp_getset */
-  nullptr,                                     /* tp_base */
-  nullptr,                                     /* tp_dict */
-  nullptr,                                     /* tp_descr_get */
-  nullptr,                                     /* tp_descr_set */
+  0,                                     /* tp_members */
+  0,                                     /* tp_getset */
+  0,                                     /* tp_base */
+  0,                                     /* tp_dict */
+  0,                                     /* tp_descr_get */
+  0,                                     /* tp_descr_set */
   0,                                     /* tp_dictoffset */
-  nullptr,                                     /* tp_init */
-  nullptr,                                     /* tp_alloc */
+  0,                                     /* tp_init */
+  0,                                     /* tp_alloc */
   THPEngine_new                          /* tp_new */
 };
 
@@ -284,7 +284,7 @@ static void child_atfork() {
 bool THPEngine_initModule(PyObject *module)
 {
 #ifndef _WIN32
-  if (pthread_atfork(nullptr, nullptr, child_atfork) != 0) {
+  if (pthread_atfork(0, 0, child_atfork) != 0) {
     throw std::runtime_error("unable to set pthread_atfork handler");
   }
 #endif

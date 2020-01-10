@@ -66,7 +66,7 @@ THWStorage * THPStorage_(readFileRaw)(io file, THWStorage *_storage)
 {
 #ifdef THC_GENERIC_FILE
   c10::cuda::OptionalCUDAGuard guard;
-  if (_storage != nullptr) {
+  if (_storage != 0) {
     guard.set_device(_storage->device());
   }
 #endif
@@ -80,7 +80,7 @@ THWStorage * THPStorage_(readFileRaw)(io file, THWStorage *_storage)
     THP_decodeInt64Buffer(&size, (const uint8_t*)&nsize, THP_nativeByteOrder(), 1);
   }
   THWStoragePtr storage;
-  if (_storage == nullptr) {
+  if (_storage == 0) {
     storage = THWStorage_(newWithSize)(LIBRARY_STATE size);
   } else {
     THPUtils_assert(THWStorage_(size)(LIBRARY_STATE _storage) == size,

@@ -43,7 +43,7 @@ auto PyFunctionPreHook::operator()(const variable_list& values) -> variable_list
   PyObject *key, *hook;
   Py_ssize_t pos = 0;
   while (PyDict_Next(dict, &pos, &key, &hook)) {
-    THPObjectPtr res(PyObject_CallFunctionObjArgs(hook, value.get(), nullptr));
+    THPObjectPtr res(PyObject_CallFunctionObjArgs(hook, value.get(), 0));
     if (!res) throw python_error();
     if (res == Py_None) continue;
     check_single_result(value.get(), res.get(), hook);
@@ -77,7 +77,7 @@ auto PyFunctionPostHook::operator()(
   Py_ssize_t pos = 0;
   while (PyDict_Next(dict, &pos, &key, &hook)) {
     THPObjectPtr res(PyObject_CallFunctionObjArgs(
-        hook, outputs.get(), inputs.get(), nullptr));
+        hook, outputs.get(), inputs.get(), 0));
     if (!res) throw python_error();
     if (res == Py_None) continue;
     check_result(outputs, res, hook);

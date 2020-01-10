@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "torch/csrc/generic/Storage.cpp"
 #else
 
-PyObject *THPStorageClass = nullptr;
+PyObject *THPStorageClass = 0;
 
 PyObject * THPStorage_(New)(THWStorage *ptr)
 {
@@ -27,7 +27,7 @@ static THWStorage* THPStorage_(newWithAllocator)(int64_t size, at::Allocator* al
 {
 #if defined(THC_GENERIC_FILE)
   THPUtils_setError(THPStorageStr " does not support custom allocators");
-  return nullptr;
+  return 0;
 #else
   return THWStorage_(newWithAllocator)(LIBRARY_STATE size, allocator);
 #endif
@@ -40,10 +40,10 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
 
   THPStoragePtr self((THPStorage *)type->tp_alloc(type, 0));
   THPUtils_assert(self, "failed to allocate a " THPStorageStr " object");
-  c10::Allocator* allocator = nullptr;
+  c10::Allocator* allocator = 0;
 
   // Internally we allow constructing with a keywoard only argument cdata
-  if (kwargs != nullptr) {
+  if (kwargs != 0) {
     PyObject *allocator_ptr = PyDict_GetItemString(kwargs, "allocator");
     if (allocator_ptr) {
       THPUtils_assert(THPUtils_checkLong(allocator_ptr), "invalid allocator");
@@ -89,7 +89,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
   // torch.Storage(view_source, [offset, [size]])
   if (num_args < 4 && THPStorage_(Check)(first_arg)) {
     THPUtils_setError("storage views not supported");
-    return nullptr;
+    return 0;
   }
 
   // torch.Storage(sequence)
@@ -116,7 +116,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
           THPUtils_typename(first_arg),
           THPUtils_typename(item.get()),
           THPUtils_typeTraits<scalar_t>::python_type_str);
-      return nullptr;
+      return 0;
     }
     return (PyObject*)self.release();
   }
@@ -128,7 +128,7 @@ static PyObject * THPStorage_(pynew)(PyTypeObject *type, PyObject *args, PyObjec
           "(" THPStorageStr " view_source)",
           "(" THPStorageStr " view_source, int offset)",
           "(" THPStorageStr " view_source, int offset, int size)");
-  return nullptr;
+  return 0;
   END_HANDLE_TH_ERRORS
 }
 
@@ -150,7 +150,7 @@ static PyObject * THPStorage_(get)(THPStorage *self, PyObject *index)
     if (nindex < 0 || nindex >= self->cdata->numel()) {
       PyErr_Format(PyExc_IndexError, "index %" PRId64 " out of range for storage of "
               "size %" PRId64, (int64_t) nindex, (int64_t) self->cdata->numel());
-      return nullptr;
+      return 0;
     }
     scalar_t value = THWStorage_(get)(LIBRARY_STATE self->cdata, nindex);
     return THPUtils_(newReal)(value);
@@ -159,11 +159,11 @@ static PyObject * THPStorage_(get)(THPStorage *self, PyObject *index)
     Py_ssize_t start, stop, slicelength, step;
     int64_t len = THWStorage_(size)(LIBRARY_STATE self->cdata);
     if (!THPUtils_parseSlice(index, len, &start, &stop, &step, &slicelength))
-      return nullptr;
+      return 0;
     if (step != 1) {
       THPUtils_setError("Trying to slice with a step of %" PRId64 ", but only a step of "
           "1 is supported", (int64_t)step);
-      return nullptr;
+      return 0;
     }
 
     scalar_t *data = THWStorage_(data)(LIBRARY_STATE self->cdata);
@@ -185,7 +185,7 @@ static PyObject * THPStorage_(get)(THPStorage *self, PyObject *index)
   }
   PyErr_Format(PyExc_TypeError, "can't index a " THPStorageStr " with %s",
       THPUtils_typename(index));
-  return nullptr;
+  return 0;
   END_HANDLE_TH_ERRORS
 }
 
@@ -234,49 +234,49 @@ static PyMappingMethods THPStorage_(mappingmethods) = {
 
 // TODO: implement equality
 PyTypeObject THPStorageType = {
-  PyVarObject_HEAD_INIT(nullptr, 0)
+  PyVarObject_HEAD_INIT(0, 0)
   "torch._C." THPStorageBaseStr,         /* tp_name */
   sizeof(THPStorage),                    /* tp_basicsize */
   0,                                     /* tp_itemsize */
   (destructor)THPStorage_(dealloc),      /* tp_dealloc */
-  nullptr,                                     /* tp_print */
-  nullptr,                                     /* tp_getattr */
-  nullptr,                                     /* tp_setattr */
-  nullptr,                                     /* tp_reserved */
-  nullptr,                                     /* tp_repr */
-  nullptr,                                     /* tp_as_number */
-  nullptr,                                     /* tp_as_sequence */
+  0,                                     /* tp_print */
+  0,                                     /* tp_getattr */
+  0,                                     /* tp_setattr */
+  0,                                     /* tp_reserved */
+  0,                                     /* tp_repr */
+  0,                                     /* tp_as_number */
+  0,                                     /* tp_as_sequence */
   &THPStorage_(mappingmethods),          /* tp_as_mapping */
-  nullptr,                                     /* tp_hash  */
-  nullptr,                                     /* tp_call */
-  nullptr,                                     /* tp_str */
-  nullptr,                                     /* tp_getattro */
-  nullptr,                                     /* tp_setattro */
-  nullptr,                                     /* tp_as_buffer */
+  0,                                     /* tp_hash  */
+  0,                                     /* tp_call */
+  0,                                     /* tp_str */
+  0,                                     /* tp_getattro */
+  0,                                     /* tp_setattro */
+  0,                                     /* tp_as_buffer */
   Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
-  nullptr,                                  /* tp_doc */
-  nullptr,                                     /* tp_traverse */
-  nullptr,                                     /* tp_clear */
-  nullptr,                                     /* tp_richcompare */
+  0,                                  /* tp_doc */
+  0,                                     /* tp_traverse */
+  0,                                     /* tp_clear */
+  0,                                     /* tp_richcompare */
   0,                                     /* tp_weaklistoffset */
-  nullptr,                                     /* tp_iter */
-  nullptr,                                     /* tp_iternext */
-  nullptr,   /* will be assigned in init */    /* tp_methods */
-  nullptr,   /* will be assigned in init */    /* tp_members */
-  nullptr,                                     /* tp_getset */
-  nullptr,                                     /* tp_base */
-  nullptr,                                     /* tp_dict */
-  nullptr,                                     /* tp_descr_get */
-  nullptr,                                     /* tp_descr_set */
+  0,                                     /* tp_iter */
+  0,                                     /* tp_iternext */
+  0,   /* will be assigned in init */    /* tp_methods */
+  0,   /* will be assigned in init */    /* tp_members */
+  0,                                     /* tp_getset */
+  0,                                     /* tp_base */
+  0,                                     /* tp_dict */
+  0,                                     /* tp_descr_get */
+  0,                                     /* tp_descr_set */
   0,                                     /* tp_dictoffset */
-  nullptr,                                     /* tp_init */
-  nullptr,                                     /* tp_alloc */
+  0,                                     /* tp_init */
+  0,                                     /* tp_alloc */
   THPStorage_(pynew),                    /* tp_new */
 };
 
 static struct PyMemberDef THPStorage_(members)[] = {
-  {(char*)"_cdata", T_ULONGLONG, offsetof(THPStorage, cdata), READONLY, nullptr},
-  {nullptr}
+  {(char*)"_cdata", T_ULONGLONG, offsetof(THPStorage, cdata), READONLY, 0},
+  {0}
 };
 
 static PyObject * THPStorage_(device)(THPStorage* self, void *unused) {
@@ -296,9 +296,9 @@ static PyObject * THPStorage_(dtype)(THPStorage *self, void *unused)
 typedef PyObject *(*getter)(PyObject *, void *);
 
 static struct PyGetSetDef THPStorage_(properties)[] = {
-  {"device", (getter)THPStorage_(device), nullptr, nullptr, nullptr},
-  {"dtype",  (getter)THPStorage_(dtype), nullptr, nullptr, nullptr},
-  {nullptr}
+  {"device", (getter)THPStorage_(device), 0, 0, 0},
+  {"dtype",  (getter)THPStorage_(dtype), 0, 0, 0},
+  {0}
 };
 
 extern THPCopyList THWStorage_(copy_functions);

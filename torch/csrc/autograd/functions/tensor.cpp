@@ -92,7 +92,7 @@ auto CopySlices::apply(variable_list&& inputs) -> variable_list {
 }
 
 void CopySlices::release_variables() {
-  fn = nullptr;
+  fn = 0;
 }
 
 }} // namespace torch::autograd

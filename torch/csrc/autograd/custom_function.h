@@ -20,7 +20,7 @@ TORCH_API void check_variable_result(const Variable& original,
 
 // Get the return type of the forward function of the custom Function class X
 template<typename X, typename... Args>
-using forward_t = decltype(X::forward(nullptr, std::declval<Args>()...));
+using forward_t = decltype(X::forward(0, std::declval<Args>()...));
 // To use custom autograd operations implement a Function subclass with
 // static backward and forward functions
 //
@@ -207,7 +207,7 @@ auto Function<T>::apply(Args&&... args) -> c10::guts::enable_if_t<std::is_same<X
     outputs = T::forward(&node->ctx_, std::forward<Args>(args)...);
   }
 
-  auto wrapped_outputs = _wrap_outputs(input_vars, node->ctx_.get_non_differentiable(), node->ctx_.get_dirty(), outputs, is_executable ? node : nullptr);
+  auto wrapped_outputs = _wrap_outputs(input_vars, node->ctx_.get_non_differentiable(), node->ctx_.get_dirty(), outputs, is_executable ? node : 0);
 
   node->output_info_.reserve(wrapped_outputs.size());
   for (auto& output : wrapped_outputs) {
